@@ -206,15 +206,17 @@ void MasternodeList::updateMyMasternodeInfo(QString strAlias, QString strAddr, C
         ui->tableWidgetMyMasternodes->insertRow(nNewRow);
     }
     CScript pubkey;
-    pubkey = GetScriptForDestination(pmn->pubkey.GetID());
     CTxDestination address1;
-    ExtractDestination(pubkey, address1);
+    if(pmn) {
+		pubkey = GetScriptForDestination(pmn->pubkey.GetID());
+		ExtractDestination(pubkey, address1);
+	}
     CBitcoinAddress address2(address1);
     QTableWidgetItem* aliasItem = new QTableWidgetItem(strAlias);
     QTableWidgetItem* addrItem = new QTableWidgetItem(pmn ? QString::fromStdString(pmn->addr.ToString()) : strAddr);
     QTableWidgetItem* protocolItem = new QTableWidgetItem(QString::number(pmn ? pmn->protocolVersion : -1));
     QTableWidgetItem* statusItem = new QTableWidgetItem(QString::fromStdString(pmn ? pmn->Status() : "MISSING"));
-    QTableWidgetItem* activeSecondsItem = new QTableWidgetItem(QString::number(pmn->lastTimeSeen - pmn->sigTime));
+    QTableWidgetItem* activeSecondsItem = new QTableWidgetItem(pmn ? QString::number(pmn->lastTimeSeen - pmn->sigTime) : "0");
     QTableWidgetItem* lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M", pmn ? pmn->lastTimeSeen : 0)));
     QTableWidgetItem* pubkeyItem = new QTableWidgetItem(QString::fromStdString(pmn ? address2.ToString() : ""));
 
